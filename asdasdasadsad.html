@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Form and Validation</title>
+    <style>
+        .sheet {
+            background-color: white; /* White background for the sheet */
+            width: 80%; /* Adjust the width as needed */
+            max-width: 1900px;
+            padding: 20px;
+            border-radius: 20px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            border: 1px solid #ddd; /* Light gray border */
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .valid {
+            border-color: green;
+        }
+        .invalid {
+            border-color: red;
+        }
+    </style>
+</head>
+<body >
+    <div class="container my-5 py-4, sheet">
+        <!-- Date and Time -->
+        <div class="text-end">
+            <h6 id="currentDate"></h6>
+        </div>
+
+        <h2 class="text-center mb-4">User Information Form</h2>
+
+        <!-- Form -->
+        <form id="userForm" onsubmit="return validateForm()">
+            <!-- Name -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" id="name" class="form-control" required>
+                <span class="error" id="nameError"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" id="email" class="form-control" required>
+                <span class="error" id="emailError"></span>
+            </div>
+
+            <!-- Age -->
+            <div class="mb-3">
+                <label for="age" class="form-label">Age:</label>
+                <input type="number" id="age" class="form-control" min="1" max="120" required>
+                <span class="error" id="ageError"></span>
+            </div>
+
+            <!-- Radio Buttons -->
+            <div class="mb-3">
+                <label class="form-label">Select Role:</label><br>
+                <div class="form-check">
+                    <input type="radio" name="role" value="Student" class="form-check-input" id="roleStudent">
+                    <label for="roleStudent" class="form-check-label">Student</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" name="role" value="Teacher" class="form-check-input" id="roleTeacher">
+                    <label for="roleTeacher" class="form-check-label">Teacher</label>
+                </div>
+                <span class="error" id="roleError"></span>
+            </div>
+
+            <!-- Checkboxes -->
+            <div class="mb-3">
+                <label class="form-label">Select Interests:</label><br>
+                <div class="form-check">
+                    <input type="checkbox" name="interest" value="Coding" class="form-check-input" id="interestCoding">
+                    <label for="interestCoding" class="form-check-label">Coding</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" name="interest" value="Music" class="form-check-input" id="interestMusic">
+                    <label for="interestMusic" class="form-check-label">Music</label>
+                </div>
+                <span class="error" id="interestError"></span>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label for="notes" class="form-label">Notes:</label>
+                <textarea id="notes" rows="4" class="form-control" required></textarea>
+                <span class="error" id="notesError"></span>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <!-- Report -->
+        <h3 class="mt-5">Summary</h3>
+        <textarea id="report" class="form-control" rows="10" readonly></textarea>
+    </div>
+
+    <script>
+        // Display Current Date and Time
+        document.getElementById('currentDate').innerText = new Date().toLocaleString();
+    
+        function validateForm() {
+            let isValid = true;
+
+            // Clear previous error messages
+            document.querySelectorAll('.error').forEach(el => el.textContent = '');
+
+            // Name Validation
+            const name = document.getElementById('name');
+            if (name.value.trim() === '') {
+                document.getElementById('nameError').textContent = 'Name is required.';
+                name.classList.add('invalid');
+                isValid = false;
+            } else {
+                name.classList.add('valid');
+            }
+
+            // Email Validation
+            const email = document.getElementById('email');
+            if (email.value.trim() === '') {
+                document.getElementById('emailError').textContent = 'Email is required.';
+                email.classList.add('invalid');
+                isValid = false;
+            } else {
+                email.classList.add('valid');
+            }
+
+            // Age Validation
+            const age = document.getElementById('age');
+            if (age.value < 1 || age.value > 120) {
+                document.getElementById('ageError').textContent = 'Enter a valid age (1-120).';
+                age.classList.add('invalid');
+                isValid = false;
+            } else {
+                age.classList.add('valid');
+            }
+
+            // Role Validation
+            const role = document.querySelector('input[name="role"]:checked');
+            if (!role) {
+                document.getElementById('roleError').textContent = 'Please select a role.';
+                isValid = false;
+            }
+
+            // Interest Validation
+            const interests = document.querySelectorAll('input[name="interest"]:checked');
+            if (interests.length === 0) {
+                document.getElementById('interestError').textContent = 'Select at least one interest.';
+                isValid = false;
+            }
+
+            // Notes Validation
+            const notes = document.getElementById('notes');
+            if (notes.value.trim() === '') {
+                document.getElementById('notesError').textContent = 'Notes cannot be empty.';
+                notes.classList.add('invalid');
+                isValid = false;
+            } else {
+                notes.classList.add('valid');
+            }
+
+            // Generate Report if Valid
+            if (isValid) {
+                const report = `
+Name: ${name.value}
+Email: ${email.value}
+Age: ${age.value}
+Role: ${role ? role.value : ''}
+Interests: ${Array.from(interests).map(i => i.value).join(', ')}
+Notes: ${notes.value}
+                `;
+                document.getElementById('report').value = report;
+            }
+
+            return false;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
